@@ -1,0 +1,11 @@
+/* Admin CSS for Quick Debug Log Viewer */
+.error-fatal {
+    color: #ff4c4c;
+    font-weight: bold;
+}
+.error-warning {
+    color: #ffa500;
+}
+.error-notice {
+    color: #ffff66;
+}
