@@ -72,10 +72,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-quick-debug-log-viewer.php
  *
  * @since    1.0.0
  */
-function run_quick_debug_log_viewer() {
+function quick_debug_log_viewer_run() {
 
 	$plugin = new Quick_Debug_Log_Viewer();
 	$plugin->run();
 
 }
-run_quick_debug_log_viewer();
+quick_debug_log_viewer_run();
