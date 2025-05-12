@@ -166,8 +166,7 @@ class Quick_Debug_Log_Viewer_Admin {
 			if ($log_content !== false) {
 				header('Content-Type: text/plain');
 				header('Content-Disposition: attachment; filename="debug.log"');
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo $log_content;
+				echo $log_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				exit;
 			} else {
 				wp_die(esc_html__('Could not read debug log file.', 'quick-debug-log-viewer'));
