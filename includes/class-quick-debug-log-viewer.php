@@ -74,7 +74,6 @@ class Quick_Debug_Log_Viewer {
 		}
 		$this->plugin_name = 'quick-debug-log-viewer';
 		$this->load_dependencies();
-		$this->set_locale();
 		$this->define_admin_hooks();
 		// This is the public side of the plugin, so we don't need to define public hooks here.
 		// $this->define_public_hooks();
@@ -86,7 +85,6 @@ class Quick_Debug_Log_Viewer {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Quick_Debug_Log_Viewer_Loader. Orchestrates the hooks of the plugin.
-	 * - Quick_Debug_Log_Viewer_i18n. Defines internationalization functionality.
 	 * - Quick_Debug_Log_Viewer_Admin. Defines all hooks for the admin area.
 	 * - Quick_Debug_Log_Viewer_Public. Defines all hooks for the public side of the site.
 	 *
@@ -112,20 +110,6 @@ class Quick_Debug_Log_Viewer {
 		 */
 		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-quick-debug-log-viewer-public.php';
 		$this->loader = new Quick_Debug_Log_Viewer_Loader();
-	}
-
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the Quick_Debug_Log_Viewer_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function set_locale() {
-		$plugin_i18n = new Quick_Debug_Log_Viewer_i18n();
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
