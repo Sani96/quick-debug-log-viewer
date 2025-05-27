@@ -1,45 +1,62 @@
 === Quick debug.log Viewer ===
-Contributors: sani060913
+Contributors: wpsani
 Tags: debug, error log, admin, troubleshooting, logging
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-View and manage the WordPress debug.log file directly from your admin area.
+
+Easily view and manage your WordPress debug.log file directly from the admin area — no FTP access required.
 
 == Description ==
-Easily view and manage your WordPress debug.log file directly from the admin area.
-No need to access your server via FTP — visualize, scroll, and clear logs inside the dashboard.
-Ideal for developers, site managers, or anyone needing to troubleshoot and view WordPress debug.log errors quickly.
+
+**Quick debug.log Viewer** lets you quickly inspect your site's debug.log file without leaving the WordPress dashboard.
+
+- Instantly view, scroll, and search your `debug.log` contents
+- Clear the log with a single click
+- Download the log for backups or support
+- Works even if `WP_DEBUG` is off — as long as the file exists
+
+Ideal for developers, site managers, and anyone needing to troubleshoot WordPress issues fast.
+
+👉 Learn more and download from: [https://wpsani.store/downloads/quick-debug-log-viewer-free/](https://wpsani.store/downloads/quick-debug-log-viewer-free/)
 
 == Installation ==
-1. Upload the plugin files to the `/wp-content/plugins/quick-debug-log-viewer` directory, or install the plugin through the WordPress plugins screen directly.
+
+1. Upload the plugin to `/wp-content/plugins/quick-debug-log-viewer`, or install it directly via the WordPress plugin screen.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Go to Debug Log Viewer to view your site's debug log.
+3. Go to **Tools → Quick debug.log Viewer** to see your site's debug log.
 
 == Frequently Asked Questions ==
 
 = Where is the debug.log file? =
-It’s located in your `wp-content` directory, typically at `wp-content/debug.log`.
+It’s typically located in your `wp-content` directory at `wp-content/debug.log`.
 
 = Do I need to enable anything for this to work? =
-While the plugin is designed to work with the standard `debug.log` generated when `WP_DEBUG` and `WP_DEBUG_LOG` are set to `true` in `wp-config.php`, it can still read the `debug.log` file as long as it exists in the `wp-content` directory — even if those constants are disabled. 
-Make sure the file exists and has read permissions.
+The plugin works best when `WP_DEBUG` and `WP_DEBUG_LOG` are enabled in `wp-config.php`, but it can still read the file if it exists and has proper read permissions.
 
 = Can I clear the log from the dashboard? =
-Yes! There's a button to safely clear the log without leaving your WordPress admin.
+Yes — just click the “Clear Log” button to safely empty the log file.
 
 == Screenshots ==
+1. View your debug.log directly in the admin panel.
 
 == Changelog ==
+
+= 1.0.1 =
+* Updated menu label for clarity
+* Fixed typos in readme.txt
+* Added admin screenshot
+
 = 1.0.0 =
 * Initial release.
 * View, scroll, and search the debug log inside the dashboard.
 * Clear the log with a single click.
-* Download the log for external backups.
+* Download the log for backups or support.
 
 == Upgrade Notice ==
-= 1.0.0 =
-Initial stable release.
+
+= 1.0.1 =
+Minor improvements: updated menu label, fixed typos, added screenshot.

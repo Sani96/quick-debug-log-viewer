@@ -101,7 +101,7 @@ class Quick_Debug_Log_Viewer_Admin {
 	public function add_admin_menu() {
 		add_menu_page(
 			'Quick debug.log Viewer',
-			'debug.log',
+			'Quick debug.log Viewer',
 			'manage_options',
 			'quick-debug-log-viewer',
 			[$this, 'display_admin_page'],
