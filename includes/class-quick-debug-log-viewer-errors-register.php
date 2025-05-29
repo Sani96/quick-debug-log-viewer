@@ -70,14 +70,13 @@ class Quick_Debug_Log_Viewer_Errors_Register {
             return [];
         }
 
-        $lines = file($file_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = file($file_path, FILE_IGNORE_NEW_LINES);
         $blocks = [];
         $current_block = '';
 
         foreach ($lines as $line) {
-            if (preg_match('/(^\[\d{2}-[A-Za-z]{3}-\d{4}.*?\]\s+)?(PHP )?(Fatal error|Warning|Notice|Deprecated)/i', $line)) {
-                // If we encounter a new error line, save the current block if it exists
-                if (!empty($current_block)) {
+            if (preg_match('/(PHP )?(Fatal error|Warning|Notice|Deprecated|Parse error|Uncaught)/i', $line)) {
+                if (!empty(trim($current_block))) {
                     $blocks[] = trim($current_block);
                 }
                 $current_block = $line . "\n";
@@ -86,8 +85,7 @@ class Quick_Debug_Log_Viewer_Errors_Register {
             }
         }
 
-        // Last block
-        if (!empty($current_block)) {
+        if (!empty(trim($current_block))) {
             $blocks[] = trim($current_block);
         }
 
