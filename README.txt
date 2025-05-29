@@ -1,5 +1,5 @@
 === Quick debug.log Viewer ===
-Contributors: wpsani
+Contributors: sani060913
 Tags: debug, error log, admin, troubleshooting, logging
 Requires at least: 6.0
 Tested up to: 6.8
