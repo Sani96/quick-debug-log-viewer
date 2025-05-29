@@ -3,7 +3,7 @@ Contributors: sani060913
 Tags: debug, error log, admin, troubleshooting, logging  
 Requires at least: 6.0  
 Tested up to: 6.8  
-Stable tag: 1.0.3  
+Stable tag: 1.0.4  
 Requires PHP: 7.0  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
@@ -18,6 +18,9 @@ Easily view and manage your WordPress debug.log file directly from the admin are
 - Filter logs by type: Fatal, Warning, Notice — or show all  
 - Clear the log with a single click  
 - Download the log for backups or support  
+- Load large logs in chunks with the **Load More** button  
+- Secure HTML output with escaping to prevent session theft  
+- Stack traces are shown in single blocks for better readability  
 - Works even if `WP_DEBUG` is off — as long as the file exists  
 
 Ideal for developers, site managers, and anyone needing to troubleshoot WordPress issues fast.
@@ -47,6 +50,14 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 
 == Changelog ==
 
+= 1.0.4 =
+* Improved regex for better parsing of multi-line log entries and stack traces  
+* Added escaping of log output with `esc_html()` for enhanced security  
+* Implemented “Load More” button to progressively fetch large logs in 30-block chunks  
+* Optimized AJAX search to work on the last 300 blocks only  
+* Improved stability when viewing very large debug.log files  
+* Refined UI to support dynamic block loading and consistent scroll buttons
+
 = 1.0.3 =
 * Added AJAX-powered search to filter debug.log entries by keyword in real-time  
 * Moved scroll buttons inside the log viewer for better UX on long logs  
@@ -70,5 +81,5 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 
 == Upgrade Notice ==
 
-= 1.0.3 =
-New AJAX-powered search lets you instantly find specific entries in the log. Improved layout of scroll buttons.
+= 1.0.4 =
+Improved performance and security: better parsing of stack traces, safe HTML output, and progressive loading for large debug.log files.
