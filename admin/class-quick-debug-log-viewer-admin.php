@@ -91,7 +91,7 @@ class Quick_Debug_Log_Viewer_Admin {
 	public function search_debug_log() {
 		check_ajax_referer('search_debug_log_nonce', 'nonce');
 
-		$search_term = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
+		$search_term = isset($_POST['keyword']) ? sanitize_text_field(wp_unslash($_POST['keyword'])) : '';
 		$blocks = $this->errors_register->search_debug_log_blocks_streaming($this->debug_log_file_path, $search_term);
 
 		if (!$blocks || !is_array($blocks)) {
