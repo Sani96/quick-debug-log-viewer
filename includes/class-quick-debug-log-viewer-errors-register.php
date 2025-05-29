@@ -59,155 +59,38 @@ class Quick_Debug_Log_Viewer_Errors_Register {
     }
 
     /**
-     * Detects critical errors in the debug log.
-     * If $get_all is true, it returns all relevant errors found;
-     * otherwise, it returns only the most recent one.
+     * Parses the debug log file and returns an array of critical errors.
      *
      * @since    1.0.0
-     * @param    string         $debug_log_file_path    Path to the debug.log file.
-     * @param    callable|null  $callback               Optional callback to handle the detected error(s).
-     * @param    bool           $get_all                Whether to retrieve all errors or just the last one.
-     * @return   array|null     An array of error data or null if none found.
+     * @param    string  $debug_log_file_path  Path to the debug.log file.
+     * @return   array|null                    An array of error data or null if no errors found.
      */
-    public function detect_errors($debug_log_file_path, $get_all = false, $callback = null) {
-        if (!file_exists($debug_log_file_path) || !is_readable($debug_log_file_path)) {
-            return null;
+    public function parse_debug_log_blocks($file_path) {
+        if (!file_exists($file_path)) {
+            return [];
         }
 
-        $errors = [];
-        try {
-            $file = new SplFileObject($debug_log_file_path, 'r');
-        } catch (RuntimeException $e) {
-            return null;
-        }
+        $lines = file($file_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $blocks = [];
+        $current_block = '';
 
-        if ($get_all) {
-            // Read the entire file line by line.
-            while (!$file->eof()) {
-                $line = $file->fgets();
-                if ($this->is_relevant_error_line($line)) {
-                    $parsed = $this->parse_error_line($line);
-                    if ($parsed) {
-                        $errors[] = $parsed;
-                    }
+        foreach ($lines as $line) {
+            if (preg_match('/(^\[\d{2}-[A-Za-z]{3}-\d{4}.*?\]\s+)?(PHP )?(Fatal error|Warning|Notice|Deprecated)/i', $line)) {
+                // If we encounter a new error line, save the current block if it exists
+                if (!empty($current_block)) {
+                    $blocks[] = trim($current_block);
                 }
-            }
-            if ($callback) {
-                try {
-                    $callback($errors);
-                } catch (Exception $e) {
-                }
-            }
-            return $errors;
-        } else {
-            // Retrieve only the most recent relevant error.
-            $file->seek(PHP_INT_MAX);
-            while ($file->key() > 0) {
-                $file->seek($file->key() - 1);
-                $line = $file->current();
-                if ($this->is_relevant_error_line($line)) {
-                    $parsed = $this->parse_error_line($line);
-                    if ($callback) {
-                        try {
-                            $callback($parsed);
-                        } catch (Exception $e) {
-                        }
-                    }
-                    return $parsed;
-                }
+                $current_block = $line . "\n";
+            } else {
+                $current_block .= $line . "\n";
             }
         }
 
-        return $get_all ? [] : null;
-    }
-
-    /**
-     * Determines if a given log line contains a relevant error.
-     *
-     * @param    string    $line    The log line to check.
-     * @return   bool               True if it contains a critical error, false otherwise.
-     */
-    private function is_relevant_error_line($line) {
-        return stripos($line, 'PHP Fatal error') !== false || 
-        stripos($line, 'Uncaught') !== false || 
-        stripos($line, 'Parse error') !== false;
-    }
-
-    /**
-     * Parses a log line into a structured error array.
-     *
-     * @param    string     $line    The log line.
-     * @return   array|null          Parsed error data or null if not matched.
-     */
-    private function parse_error_line($line) {
-        if (preg_match('/(.+): (.+) in (.+) on line (\\d+)/', $line, $matches)) {
-            return [
-                'type'      => trim($matches[1]),
-                'message'   => trim($matches[2]),
-                'file'      => trim($matches[3]),
-                'line'      => (int) trim($matches[4]),
-                'timestamp' => time(),
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Updates the custom error log (JSON) by adding a new error.
-     *
-     * @since    1.0.0
-     * @param    array   $error                 The error data to log.
-     * @param    string  $custom_log_file_path  Path to the custom JSON log file.
-     * @return   void
-     */
-    public function update_custom_error_log($error, $custom_log_file_path) {
-        if (!is_array($error)) {
-            return;
+        // Last block
+        if (!empty($current_block)) {
+            $blocks[] = trim($current_block);
         }
 
-        $error_data = [
-            'type'      => $error['type'],
-            'message'   => $error['message'],
-            'file'      => $error['file'],
-            'line'      => $error['line'],
-            'timestamp' => $error['timestamp'],
-        ];
-
-        if (file_exists($custom_log_file_path)) {
-            $errors = json_decode(file_get_contents($custom_log_file_path), true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $errors = []; // Reset if JSON is corrupted.
-            }
-        } else {
-            $errors = [];
-        }
-
-        $errors[] = $error_data;
-
-        $allowed_dir = realpath(WP_CONTENT_DIR);
-        $real_path = realpath(dirname($custom_log_file_path));
-        if (strpos($real_path, $allowed_dir) !== 0) {
-            return;
-        }
-        file_put_contents($custom_log_file_path, json_encode($errors, JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * Checks if two error entries are identical.
-     *
-     * @since    1.0.0
-     * @param    array   $last_error    The last recorded error.
-     * @param    array   $error         The current error to compare.
-     * @return   bool                   True if both errors are identical, false otherwise.
-     */
-    public function check_if_same_errors($last_error, $error) {
-        if (!is_array($last_error) || !is_array($error)) {
-            return false;
-        }
-        return $last_error['timestamp'] === $error['timestamp'] &&
-               $last_error['type']      === $error['type'] &&
-               $last_error['message']   === $error['message'] &&
-               $last_error['file']      === $error['file'] &&
-               $last_error['line']      === $error['line'];
+        return $blocks;
     }
 }

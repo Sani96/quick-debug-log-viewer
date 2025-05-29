@@ -31,22 +31,26 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <div class="quick-debug-log-container" style="position:relative;max-height: 600px; overflow-y: scroll; background: #1e1e1e; color: #f5f5f5; padding: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; line-height: 1.4; margin-top: 20px;">
             <button id="scroll-up-btn" class="scroll-btn dashicons dashicons-arrow-up-alt2" title="Scroll to Top"></button>
             <?php
-            if ( isset( $errors ) && $errors ) {
-                $lines = preg_split('/\r\n|\r|\n/', trim($errors));
-                foreach ( $lines as $line ) {
-                    $css_class = '';
-                    if ( stripos($line, 'Fatal') !== false ) {
-                        $css_class = 'error-fatal';
-                    } elseif ( stripos($line, 'Warning') !== false ) {
-                        $css_class = 'error-warning';
-                    } elseif ( stripos($line, 'Notice') !== false ) {
-                        $css_class = 'error-notice';
+                if ( isset( $blocks ) && is_array( $blocks ) && !empty( $blocks ) ) {
+                    foreach ( $blocks as $block ) {
+                        $css_class = '';
+                        if ( stripos($block, 'Fatal') !== false ) {
+                            $css_class = 'error-fatal';
+                        } elseif ( stripos($block, 'Warning') !== false ) {
+                            $css_class = 'error-warning';
+                        } elseif ( stripos($block, 'Notice') !== false ) {
+                            $css_class = 'error-info';
+                        } else {
+                            $css_class = 'error-secondary';
+                        }
+
+                        echo '<div class="alert ' . esc_attr($css_class) . '">';
+                        echo esc_html($block);
+                        echo '</div>';
                     }
-                    echo '<div class="' . esc_attr($css_class) . '">' . esc_html($line) . '</div>';
+                } else {
+                    echo '<p>' . esc_html__('No errors found.', 'quick-debug-log-viewer') . '</p>';
                 }
-            } else {
-                esc_html_e('No errors found.', 'quick-debug-log-viewer');
-            }
             ?>
             <button id="scroll-down-btn" class="scroll-btn dashicons dashicons-arrow-down-alt2" title="Scroll to Bottom"></button>
         </div>

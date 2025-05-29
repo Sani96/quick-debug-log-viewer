@@ -65,36 +65,41 @@ class Quick_Debug_Log_Viewer_Admin {
 	 */
 	public function search_debug_log() {
 		check_ajax_referer('search_debug_log_nonce', 'nonce');
-		$keyword = isset($_POST['keyword']) ? sanitize_text_field(wp_unslash($_POST['keyword'])) : '';
-		$log_path = WP_CONTENT_DIR . '/debug.log';
 
-		if (!file_exists($log_path) || !is_readable($log_path)) {
-			wp_send_json_error('debug.log not readable');
+		$search_term = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
+		$blocks = $this->errors_register->parse_debug_log_blocks($this->debug_log_file_path);
+
+		if (!$blocks || !is_array($blocks)) {
+			wp_send_json_success([]);
 		}
 
-		$lines = file($log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		$output = '';
+		if (!empty($search_term)) {
+			$search_term = strtolower($search_term);
+			$blocks = array_filter($blocks, function($block) use ($search_term) {
+				return strpos(strtolower($block), $search_term) !== false;
+			});
+		}
 
-		foreach ($lines as $line) {
-			if (stripos($line, $keyword) !== false || $keyword === '') {
-				$css_class = '';
-				if (stripos($line, 'Fatal') !== false) {
-					$css_class = 'error-fatal';
-				} elseif (stripos($line, 'Warning') !== false) {
-					$css_class = 'error-warning';
-				} elseif (stripos($line, 'Notice') !== false) {
-					$css_class = 'error-notice';
-				}
-				$output .= '<div class="' . esc_attr($css_class) . '">' . esc_html($line) . '</div>';
+		$formatted_blocks = array_map(function($block) {
+			$class = 'log-block'; // base
+			if (stripos($block, 'fatal error') !== false) {
+				$class .= ' error-fatal';
+			} elseif (stripos($block, 'warning') !== false) {
+				$class .= ' error-warning';
+			} elseif (stripos($block, 'notice') !== false) {
+				$class .= ' error-notice';
+			} elseif (stripos($block, 'deprecated') !== false) {
+				$class .= ' error-deprecated';
 			}
-		}
 
-		if ( $output ) {
-			echo wp_kses_post( $output );
-		} else {
-			echo '<div>' . esc_html__( 'No matching results.', 'quick-debug-log-viewer' ) . '</div>';
-		}		
-		wp_die();
+			return [
+				'text' => $block,
+				'class' => $class
+			];
+		}, array_values($blocks));
+
+		wp_send_json_success($formatted_blocks);
+
 	}
 
     /**
@@ -161,7 +166,7 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @return   void
 	 */
 	public function display_admin_page() {
-		$errors = $this->errors_register->get_raw_log_content($this->debug_log_file_path);
+		$blocks = $this->errors_register->parse_debug_log_blocks($this->debug_log_file_path);
 		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/quick-debug-log-viewer-admin-display.php';
 	}
 

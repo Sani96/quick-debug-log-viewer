@@ -93,7 +93,21 @@
 						nonce: nonce
 					},
 					success: function (response) {
-						$('.quick-debug-log-container').html(response);
+
+						if (response.success && Array.isArray(response.data)) {
+							const $container = $('.quick-debug-log-container');
+							$container.empty();
+
+							if (response.data.length === 0) {
+								$container.append('<div class="no-results">No matching entries found.</div>');
+								return;
+							}
+
+							response.data.forEach(item => {
+								const div = $('<div></div>').addClass(item.class).text(item.text);
+								$container.append(div);
+							});
+						}
 					}
 				});
 			}, 300);
