@@ -3,7 +3,7 @@ Contributors: sani060913
 Tags: debug, error log, admin, troubleshooting, logging
 Requires at least: 6.0
 Tested up to: 6.8
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -14,7 +14,8 @@ Easily view and manage your WordPress debug.log file directly from the admin are
 
 **Quick debug.log Viewer** lets you quickly inspect your site's debug.log file without leaving the WordPress dashboard.
 
-- Instantly view, scroll, and search your `debug.log` contents
+- Instantly view, scroll, and filter your `debug.log` contents
+- Filter logs by type: Fatal, Warning, Notice — or show all
 - Clear the log with a single click
 - Download the log for backups or support
 - Works even if `WP_DEBUG` is off — as long as the file exists
@@ -41,9 +42,15 @@ The plugin works best when `WP_DEBUG` and `WP_DEBUG_LOG` are enabled in `wp-conf
 Yes — just click the “Clear Log” button to safely empty the log file.
 
 == Screenshots ==
-1. View your debug.log directly in the admin panel.
+1. View and filter your debug.log directly in the admin panel.
 
 == Changelog ==
+
+= 1.0.2 =
+* Added sticky scroll-to-top and scroll-to-bottom buttons inside the log viewer
+* Added filter controls to view only Fatal errors, Warnings, Notices, or all logs
+* Styled UI controls to match the WPSani brand (compact, modern, accessible)
+* Improved usability and readability for long debug logs
 
 = 1.0.1 =
 * Updated menu label for clarity
@@ -58,5 +65,5 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 
 == Upgrade Notice ==
 
-= 1.0.1 =
-Minor improvements: updated menu label, fixed typos, added screenshot.
+= 1.0.2 =
+New log filters and sticky scroll buttons added to enhance navigation and visibility of errors in long debug logs.
