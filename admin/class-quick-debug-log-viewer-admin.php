@@ -93,8 +93,8 @@ class Quick_Debug_Log_Viewer_Admin {
 			}
 
 			return [
-				'text' => $block,
-				'class' => $class
+				'text' => esc_html($block),
+				'class' => esc_attr($class)
 			];
 		}, array_values($blocks));
 
