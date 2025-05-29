@@ -9,3 +9,40 @@
 .error-notice {
     color: #ffff66;
 }
+.scroll-btn {
+    position: sticky;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #6E59A5, #5b478f);
+    color: #fff;
+    border: none;
+    border-radius: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: all 0.2s ease-in-out;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.scroll-btn:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 0 0 2px #6E59A5;
+}
+
+#scroll-up-btn {
+    top: 0;
+    display: none;
+}
+
+#scroll-down-btn {
+    bottom: 0;
+    display: none;
+}
