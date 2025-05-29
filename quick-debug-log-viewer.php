@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Quick debug.log Viewer
  * Description:       A simple and lightweight plugin to view, clear and download the debug.log file in WordPress.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            WP Sani
  * Author URI:        https://wpsani.store/
  * License:           GPL-2.0+
