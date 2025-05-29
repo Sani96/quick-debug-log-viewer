@@ -29,4 +29,26 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	/**
+	 * Filter logs based on type
+	 * 
+	 * @since 1.0.2 
+	 * @param {*} type
+	 * @returns {void} 
+	 */
+	function filterLogs(type) {
+		const allLogs = document.querySelectorAll('.quick-debug-log-container > div');
+		allLogs.forEach(log => {
+			if (type === 'all') {
+				log.style.display = 'block';
+			} else {
+				log.style.display = log.classList.contains(type) ? 'block' : 'none';
+			}
+		});
+	}
+
+	console.log('Quick Debug Log Viewer Admin JS Loaded');
+	
+	window.filterLogs = filterLogs;
+
 })( jQuery );

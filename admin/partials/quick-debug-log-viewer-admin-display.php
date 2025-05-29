@@ -28,6 +28,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         </form>
         <a href="<?php echo esc_url(admin_url('admin-post.php?action=download_debug_log')); ?>" class="button button-primary" style="margin-bottom: 10px;">Download debug.log</a>
 
+        <div style="margin-top: 20px;">
+            <strong>Filter logs:</strong>
+            <button type="button" class="button" onclick="filterLogs('all')">All</button>
+            <button type="button" class="button" onclick="filterLogs('error-fatal')">Fatal</button>
+            <button type="button" class="button" onclick="filterLogs('error-warning')">Warning</button>
+            <button type="button" class="button" onclick="filterLogs('error-notice')">Notice</button>
+        </div>
+
         <div class="quick-debug-log-container" style="max-height: 600px; overflow-y: scroll; background: #1e1e1e; color: #f5f5f5; padding: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; line-height: 1.4; margin-top: 20px;">
             <?php
             if ( isset( $errors ) && $errors ) {
