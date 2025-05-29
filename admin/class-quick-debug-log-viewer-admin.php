@@ -52,6 +52,49 @@ class Quick_Debug_Log_Viewer_Admin {
 		$this->loader->add_action('admin_init', $this, 'handle_clear_log_request');
 		$this->loader->add_action('admin_notices', $this, 'show_admin_notices');
 		$this->loader->add_action('admin_post_download_debug_log', $this, 'admin_post_download_debug_log');
+		$this->loader->add_action('wp_ajax_search_debug_log', $this, 'search_debug_log');
+	}
+
+	/**
+	 * Search the debug log for a specific keyword.
+	 * 
+	 * @since    1.0.3
+	 * @access   public
+	 * @return   void
+	 * 
+	 */
+	public function search_debug_log() {
+		check_ajax_referer('search_debug_log_nonce', 'nonce');
+		$keyword = isset($_POST['keyword']) ? sanitize_text_field(wp_unslash($_POST['keyword'])) : '';
+		$log_path = WP_CONTENT_DIR . '/debug.log';
+
+		if (!file_exists($log_path) || !is_readable($log_path)) {
+			wp_send_json_error('debug.log not readable');
+		}
+
+		$lines = file($log_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$output = '';
+
+		foreach ($lines as $line) {
+			if (stripos($line, $keyword) !== false || $keyword === '') {
+				$css_class = '';
+				if (stripos($line, 'Fatal') !== false) {
+					$css_class = 'error-fatal';
+				} elseif (stripos($line, 'Warning') !== false) {
+					$css_class = 'error-warning';
+				} elseif (stripos($line, 'Notice') !== false) {
+					$css_class = 'error-notice';
+				}
+				$output .= '<div class="' . esc_attr($css_class) . '">' . esc_html($line) . '</div>';
+			}
+		}
+
+		if ( $output ) {
+			echo wp_kses_post( $output );
+		} else {
+			echo '<div>' . esc_html__( 'No matching results.', 'quick-debug-log-viewer' ) . '</div>';
+		}		
+		wp_die();
 	}
 
     /**

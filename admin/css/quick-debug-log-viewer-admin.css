@@ -46,3 +46,34 @@
     bottom: 0;
     display: none;
 }
+
+.quick-debug-log-viewer-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.quick-debug-log-viewer-filter {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.quick-debug-log-viewer-search-container {
+    position: relative;
+}
+.quick-debug-log-viewer-search-container input {
+    padding: 6px 30px 6px 40px;
+    width: 100%;
+    max-width: 400px;
+    margin: 1em 0 0;
+}
+
+.quick-debug-log-viewer-search-container span {
+    position: absolute;
+    top: 61%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #6E59A5;
+}

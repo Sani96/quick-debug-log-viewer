@@ -15,19 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <div class="wrap">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-    <div id="quick-debug-log-viewer-admin-display">
-        <div class="quick-debug-log-viewer-admin-display-content">
-            <p><?php esc_html_e( 'You can view your debug.log here.', 'quick-debug-log-viewer' ); ?></p>
-        </div>
+    <div class="quick-debug-log-viewer-search-container">
+        <input type="text" id="quick-debug-log-viewer-log-search" placeholder="Search log…"  data-nonce="<?php echo esc_attr(wp_create_nonce('search_debug_log_nonce')); ?>">
+        <span class="dashicons dashicons-search"></span>
     </div>
     <div class="quick-debug-log-viewer-admin-display-errors">
-        <form method="post" style="margin-bottom: 10px;">
-            <?php wp_nonce_field('clear_debug_log_action', 'clear_debug_log_nonce'); ?>
-            <input type="hidden" name="clear_debug_log" value="1">
-            <button type="submit" class="button button-secondary">Clear debug.log</button>
-        </form>
-        <a href="<?php echo esc_url(admin_url('admin-post.php?action=download_debug_log')); ?>" class="button button-primary" style="margin-bottom: 10px;">Download debug.log</a>
-        <div style="margin-top: 20px;">
+        <div class="quick-debug-log-viewer-filter">
             <strong>Filter logs:</strong>
             <button type="button" class="button" onclick="filterLogs('all')">All</button>
             <button type="button" class="button" onclick="filterLogs('error-fatal')">Fatal</button>
@@ -58,5 +51,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <button id="scroll-down-btn" class="scroll-btn dashicons dashicons-arrow-down-alt2" title="Scroll to Bottom"></button>
         </div>
 
+    </div>
+
+    <div class="quick-debug-log-viewer-actions">
+        <form method="post" style="margin-bottom: 10px;">
+            <?php wp_nonce_field('clear_debug_log_action', 'clear_debug_log_nonce'); ?>
+            <input type="hidden" name="clear_debug_log" value="1">
+            <button type="submit" class="button button-secondary">Clear debug.log</button>
+        </form>
+        <a href="<?php echo esc_url(admin_url('admin-post.php?action=download_debug_log')); ?>" class="button button-primary" style="margin-bottom: 10px;">Download debug.log</a>
     </div>
 </div>

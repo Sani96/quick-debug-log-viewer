@@ -74,7 +74,30 @@
 		downBtn.addEventListener('click', () => {
 			container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
 		});
-	});
 
+		// Search functionality
+		const $search = $('#quick-debug-log-viewer-log-search');		
+		const nonce = $search.data('nonce');
+		let timer;
+
+		$search.on('input', function () {
+			clearTimeout(timer);
+			const keyword = $search.val();
+			timer = setTimeout(function () {
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'search_debug_log',
+						keyword: keyword,
+						nonce: nonce
+					},
+					success: function (response) {
+						$('.quick-debug-log-container').html(response);
+					}
+				});
+			}, 300);
+		});
+	});
 
 })( jQuery );
