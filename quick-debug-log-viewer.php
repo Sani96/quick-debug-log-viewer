@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  */
-define( 'QUICK_DEBUG_LOG_VIEWER_VERSION', '1.0.1' );
+define( 'QUICK_DEBUG_LOG_VIEWER_VERSION', '1.0.3' );
 
 /**
  * The code that runs during plugin activation.
