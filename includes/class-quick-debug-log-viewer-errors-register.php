@@ -59,33 +59,86 @@ class Quick_Debug_Log_Viewer_Errors_Register {
     }
 
     /**
-     * Parses the debug log file and returns an array of critical errors.
+     * Searches the debug log blocks for a specific keyword.
      *
-     * @since    1.0.0
-     * @param    string  $debug_log_file_path  Path to the debug.log file.
-     * @return   array|null                    An array of error data or null if no errors found.
+     * @since    1.0.4
+     * @param    string  $file_path   Path to the debug.log file.
+     * @param    string  $keyword     Keyword to search for in the log blocks.
+     * @param    int     $max_blocks  Maximum number of blocks to return.
+     * @return   array                An array of matching log blocks.
      */
-    public function parse_debug_log_blocks($file_path) {
-        if (!file_exists($file_path)) {
+    public function search_debug_log_blocks_streaming($file_path, $keyword = '', $max_blocks = 300) {
+        if (!file_exists($file_path) || !is_readable($file_path)) {
             return [];
         }
 
-        $lines = file($file_path, FILE_IGNORE_NEW_LINES);
+        $keyword = strtolower($keyword);
         $blocks = [];
         $current_block = '';
+        $file = new SplFileObject($file_path, 'r');
 
-        foreach ($lines as $line) {
+        while (!$file->eof()) {
+            $line = $file->fgets();
+
+            // Inizio di nuovo errore
             if (preg_match('/(PHP )?(Fatal error|Warning|Notice|Deprecated|Parse error|Uncaught)/i', $line)) {
                 if (!empty(trim($current_block))) {
-                    $blocks[] = trim($current_block);
+                    if (empty($keyword) || strpos(strtolower($current_block), $keyword) !== false) {
+                        $blocks[] = trim($current_block);
+                        if (count($blocks) >= $max_blocks) break;
+                    }
                 }
-                $current_block = $line . "\n";
+                $current_block = $line;
             } else {
-                $current_block .= $line . "\n";
+                $current_block .= $line;
             }
         }
 
+        // Ultimo blocco
         if (!empty(trim($current_block))) {
+            if (empty($keyword) || strpos(strtolower($current_block), $keyword) !== false) {
+                $blocks[] = trim($current_block);
+            }
+        }
+
+        return $blocks;
+    }
+
+    /**
+     * Parses the debug log file in a streaming manner, returning blocks of errors.
+     * This method is optimized for large files and can handle up to a specified maximum number of blocks.
+     * It reads the file line by line, detecting error blocks based on specific patterns.
+     * 
+     * @since 1.0.4
+     * @access public
+     * @param string $file_path The path to the debug log file.
+     * @param int $max_blocks The maximum number of error blocks to return. Default is 300.
+     * @return array An array of error blocks, each block containing the full error message.
+     */
+    public function parse_debug_log_blocks_streaming($file_path, $max_blocks = 300) {
+        if (!file_exists($file_path) || !is_readable($file_path)) {
+            return [];
+        }
+
+        $blocks = [];
+        $current_block = '';
+        $file = new SplFileObject($file_path, 'r');
+
+        while (!$file->eof()) {
+            $line = $file->fgets();
+
+            if (preg_match('/(PHP )?(Fatal error|Warning|Notice|Deprecated|Parse error|Uncaught)/i', $line)) {
+                if (!empty(trim($current_block))) {
+                    $blocks[] = trim($current_block);
+                    if (count($blocks) >= $max_blocks) break;
+                }
+                $current_block = $line;
+            } else {
+                $current_block .= $line;
+            }
+        }
+
+        if (!empty(trim($current_block)) && count($blocks) < $max_blocks) {
             $blocks[] = trim($current_block);
         }
 

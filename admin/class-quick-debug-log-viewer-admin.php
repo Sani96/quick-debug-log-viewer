@@ -67,7 +67,7 @@ class Quick_Debug_Log_Viewer_Admin {
 		check_ajax_referer('search_debug_log_nonce', 'nonce');
 
 		$search_term = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
-		$blocks = $this->errors_register->parse_debug_log_blocks($this->debug_log_file_path);
+		$blocks = $this->errors_register->search_debug_log_blocks_streaming($this->debug_log_file_path, $search_term);
 
 		if (!$blocks || !is_array($blocks)) {
 			wp_send_json_success([]);
@@ -166,7 +166,7 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @return   void
 	 */
 	public function display_admin_page() {
-		$blocks = $this->errors_register->parse_debug_log_blocks($this->debug_log_file_path);
+		$blocks = $this->errors_register->parse_debug_log_blocks_streaming($this->debug_log_file_path, 300);
 		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/quick-debug-log-viewer-admin-display.php';
 	}
 
