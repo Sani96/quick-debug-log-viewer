@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <button type="button" class="button" onclick="filterLogs('error-notice')">Notice</button>
         </div>
 
-        <div class="quick-debug-log-container" style="position:relative;max-height: 600px; overflow-y: scroll; background: #1e1e1e; color: #f5f5f5; padding: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; line-height: 1.4; margin-top: 20px;">
+        <div class="quick-debug-log-container" style="position:relative;max-height: 550px; overflow-y: scroll; background: #1e1e1e; color: #f5f5f5; padding: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; line-height: 1.4; margin-top: 20px;">
             <button id="scroll-up-btn" class="scroll-btn dashicons dashicons-arrow-up-alt2" title="Scroll to Top"></button>
             <?php
                 if ( isset( $blocks ) && is_array( $blocks ) && !empty( $blocks ) ) {
@@ -53,6 +53,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 }
             ?>
             <button id="scroll-down-btn" class="scroll-btn dashicons dashicons-arrow-down-alt2" title="Scroll to Bottom"></button>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: center;">
+            <button data-nonce="<?php echo esc_attr(wp_create_nonce('load_more_debug_log_nonce')); ?>" id="load-more-errors" class="button button-secondary">Load More</button>
         </div>
 
     </div>

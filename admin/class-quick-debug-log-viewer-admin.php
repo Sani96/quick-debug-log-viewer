@@ -53,6 +53,31 @@ class Quick_Debug_Log_Viewer_Admin {
 		$this->loader->add_action('admin_notices', $this, 'show_admin_notices');
 		$this->loader->add_action('admin_post_download_debug_log', $this, 'admin_post_download_debug_log');
 		$this->loader->add_action('wp_ajax_search_debug_log', $this, 'search_debug_log');
+		$this->loader->add_action('wp_ajax_load_more_debug_blocks', $this, 'load_more_debug_blocks');
+	}
+
+    /**
+     * Handle the POST request to clear the debug log.
+     *
+	 * @since    1.0.0
+	 * @access   public
+	 * @return   void
+	 */
+
+	public function handle_clear_log_request() {
+		if (isset($_POST['clear_debug_log']) && check_admin_referer('clear_debug_log_action', 'clear_debug_log_nonce')) {
+			if (!current_user_can('manage_options')) {
+				return;
+			}
+			global $wp_filesystem;
+			if (empty($wp_filesystem)) {
+				require_once ABSPATH . '/wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
+
+			$wp_filesystem->put_contents($this->debug_log_file_path, '', FS_CHMOD_FILE);
+			$this->clear_success = true;
+		}
 	}
 
 	/**
@@ -102,29 +127,42 @@ class Quick_Debug_Log_Viewer_Admin {
 
 	}
 
-    /**
-     * Handle the POST request to clear the debug log.
-     *
-	 * @since    1.0.0
+	/**
+	 * Load more debug log blocks via AJAX.
+	 * 
+	 * @since    1.0.4
 	 * @access   public
 	 * @return   void
 	 */
+	public function load_more_debug_blocks() {
+		check_ajax_referer('load_more_debug_log_nonce', 'nonce');
 
-	public function handle_clear_log_request() {
-		if (isset($_POST['clear_debug_log']) && check_admin_referer('clear_debug_log_action', 'clear_debug_log_nonce')) {
-			if (!current_user_can('manage_options')) {
-				return;
-			}
-			global $wp_filesystem;
-			if (empty($wp_filesystem)) {
-				require_once ABSPATH . '/wp-admin/includes/file.php';
-				WP_Filesystem();
-			}
+		$offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
+		$limit  = 30;
 
-			$wp_filesystem->put_contents($this->debug_log_file_path, '', FS_CHMOD_FILE);
-			$this->clear_success = true;
-		}
+		$blocks = $this->errors_register->parse_debug_log_blocks_streaming($this->debug_log_file_path, $offset + $limit);
+		$blocks = array_slice($blocks, $offset, $limit);
+
+		$formatted = array_map(function($block) {
+			$class = 'log-block';
+			if (stripos($block, 'fatal error') !== false) {
+				$class .= ' error-fatal';
+			} elseif (stripos($block, 'warning') !== false) {
+				$class .= ' error-warning';
+			} elseif (stripos($block, 'notice') !== false) {
+				$class .= ' error-notice';
+			} elseif (stripos($block, 'deprecated') !== false) {
+				$class .= ' error-deprecated';
+			}
+			return [
+				'text' => esc_html($block),
+				'class' => esc_attr($class)
+			];
+		}, $blocks);
+
+		wp_send_json_success($formatted);
 	}
+
 
     /**
      * Show success message if log was cleared.

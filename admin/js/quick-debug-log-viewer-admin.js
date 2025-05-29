@@ -49,12 +49,12 @@
 		}	
 		window.filterLogs = filterLogs;
 	
-		const container = document.querySelector('.quick-debug-log-container');
-		const upBtn = document.getElementById('scroll-up-btn');
-		const downBtn = document.getElementById('scroll-down-btn');
+		let container = document.querySelector('.quick-debug-log-container');
 
 		function updateArrowVisibility() {
-			if (!container) return;
+			const upBtn = document.getElementById('scroll-up-btn');
+			const downBtn = document.getElementById('scroll-down-btn');
+			if (!container || !upBtn || !downBtn) return;
 
 			const scrollTop = container.scrollTop;
 			const scrollHeight = container.scrollHeight;
@@ -64,19 +64,20 @@
 			downBtn.style.display = (scrollTop + offsetHeight) < (scrollHeight - 10) ? 'block' : 'none';
 		}
 
+		// Initialize scroll buttons
 		container.addEventListener('scroll', updateArrowVisibility);
 		updateArrowVisibility();
 
-		upBtn.addEventListener('click', () => {
+		// Scroll buttons functionality
+		document.getElementById('scroll-up-btn')?.addEventListener('click', () => {
 			container.scrollTo({ top: 0, behavior: 'smooth' });
 		});
-
-		downBtn.addEventListener('click', () => {
+		document.getElementById('scroll-down-btn')?.addEventListener('click', () => {
 			container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
 		});
 
 		// Search functionality
-		const $search = $('#quick-debug-log-viewer-log-search');		
+		const $search = $('#quick-debug-log-viewer-log-search');
 		const nonce = $search.data('nonce');
 		let timer;
 
@@ -93,24 +94,75 @@
 						nonce: nonce
 					},
 					success: function (response) {
-
 						if (response.success && Array.isArray(response.data)) {
 							const $container = $('.quick-debug-log-container');
 							$container.empty();
 
-							if (response.data.length === 0) {
-								$container.append('<div class="no-results">No matching entries found.</div>');
-								return;
-							}
-
+							// Insert logs
 							response.data.forEach(item => {
-								const div = $('<div></div>').addClass(item.class).text(item.text);
+								const div = $('<div></div>')
+									.addClass('alert')
+									.addClass(item.class)
+									.html(item.text.replace(/\n/g, '<br>'));
 								$container.append(div);
+							});
+
+							// Reinsert scroll buttons
+							const upBtnHTML = '<button id="scroll-up-btn" class="scroll-btn dashicons dashicons-arrow-up-alt2" title="Scroll to Top"></button>';
+							const downBtnHTML = '<button id="scroll-down-btn" class="scroll-btn dashicons dashicons-arrow-down-alt2" title="Scroll to Bottom"></button>';
+							$container.prepend(upBtnHTML);
+							$container.append(downBtnHTML);
+
+							// Reinitialize scroll buttons
+							container = document.querySelector('.quick-debug-log-container');
+							const newUp = document.getElementById('scroll-up-btn');
+							const newDown = document.getElementById('scroll-down-btn');
+
+							container.addEventListener('scroll', updateArrowVisibility);
+							updateArrowVisibility();
+
+							newUp.addEventListener('click', () => {
+								container.scrollTo({ top: 0, behavior: 'smooth' });
+							});
+							newDown.addEventListener('click', () => {
+								container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
 							});
 						}
 					}
 				});
 			}, 300);
+		});
+
+
+		// Load more functionality
+		let offset = $('.quick-debug-log-container .alert').length;
+		$('#load-more-errors').on('click', function () {
+			const button = $(this);
+			button.prop('disabled', true).text('Loading...');
+
+			$.ajax({
+				type: 'POST',
+				url: ajaxurl,
+				data: {
+					action: 'load_more_debug_blocks',
+					offset: offset,
+					nonce: $('#load-more-errors').data('nonce')
+				},
+				success: function (response) {
+					if (response.success && response.data.length > 0) {
+						response.data.forEach(block => {
+							$('.quick-debug-log-container').append(`<div class="alert ${block.class}">${block.text}</div>`);
+						});
+						offset += response.data.length;
+						button.prop('disabled', false).text('Load More');
+					} else {
+						button.text('No more logs').prop('disabled', true);
+					}
+				},
+				error: function () {
+					button.text('Error loading').prop('disabled', false);
+				}
+			});
 		});
 	});
 
