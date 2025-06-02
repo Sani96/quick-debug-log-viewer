@@ -1,4 +1,240 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+#quick-debug-log-viewer-fab {
+	background-color: #0073aa;
+	color: #fff;
+	transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:9999;
+    background:linear-gradient(to bottom, #6E59A5, #5b478f);
+    color:#fff;
+    padding:5px;
+    border-radius:50%;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    transition:all 0.3s ease-in-out;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px;
+}
+#quick-debug-log-viewer-fab:hover {
+	background-color: #005177;
+	transform: scale(1.05);
+	box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+#quick-debug-log-viewer-fab .dashicons {
+    width: auto;
+    height: auto;
+    font-size: 32px;
+}
+#quick-debug-log-viewer-clear-log,
+#quick-debug-log-viewer-download-log {
+    color: #2271b1;
+    border-color: #2271b1;
+    background: #f6f7f7;
+    vertical-align: top;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 2.15384615;
+    min-height: 30px;
+    margin: 0;
+    padding: 0 10px;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+#quick-debug-log-viewer-download-log {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: none;
+}
+.quick-debug-log-container {
+	position: relative;
+	height: 450px;
+	overflow-y: scroll;
+	background: #1e1e1e;
+	color: #f5f5f5;
+	padding: 0;
+	border: 1px solid #ccc;
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 1.4;
+	margin-top: 20px;
+}
+
+#quick-debug-log-viewer-modal {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:9998;
+}
+
+#quick-debug-log-viewer-modal h2 {
+    font-size: 23px;
+    font-weight: 400;
+    margin: 0;
+    padding: 9px 0 4px;
+    line-height: 1.3;
+}
+.quick-debug-log-viewer-filter .button,
+#load-more-errors {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 2.15384615;
+    min-height: 30px;
+    margin: 0;
+    padding: 0 10px;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    color: #2271b1;
+    border-color: #2271b1;
+    background: #f6f7f7;
+    vertical-align: top;
+}
+.quick-debug-log-viewer-filter .button:hover,
+#load-more-errors:hover {
+	background: #f0f0f1;
+	border-color: #999;
+}
+.quick-debug-log-viewer-filter button.active {
+	background-color: #0073aa !important;
+	border-color: #0073aa;
+	color: white;
+}
+.quick-debug-log-viewer-filter strong {
+    font-size: 13px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    color: #3c434a;
+}
+.log-content {
+	padding: 10px;
+}
+.alert {
+	white-space: pre-wrap;
+}
+.scroll-btn {
+	position: sticky;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(to bottom, #6E59A5, #5b478f);
+	color: #fff;
+	border: none;
+	border-radius: 1rem;
+	width: 36px;
+	height: 36px;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	opacity: 0.9;
+	transition: all 0.2s ease-in-out;
+	z-index: 20;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.scroll-btn:hover {
+	opacity: 1;
+	transform: translateX(-50%) scale(1.1);
+	box-shadow: 0 0 0 2px #6E59A5;
+}
+#scroll-up-btn {
+	top: 10px;
+}
+#scroll-down-btn {
+	bottom: 10px;
+}
+.error-fatal {
+	color: #ff4c4c;
+	font-weight: bold;
+}
+.error-warning {
+	color: #ffa500;
+}
+.error-notice {
+	color: #ffff66;
+}
+.quick-debug-log-viewer-actions {
+	margin-top: 1rem;
+	display: flex;
+	gap: 1rem;
+}
+.quick-debug-log-viewer-filter {
+	margin-top: 1rem;
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+}
+.quick-debug-log-viewer-filter button.active {
+	background-color: #0073aa;
+	color: white;
+}
+.quick-debug-log-viewer-search-container {
+	position: relative;
+}
+.quick-debug-log-viewer-search-container input {
+    padding: 6px 30px 6px 40px;
+    width: 100%;
+    max-width: 400px;
+    margin: 1em 0 0;
+    box-shadow: 0 0 0 transparent;
+    border-radius: 4px;
+    border: 1px solid #8c8f94;
+    background-color: #fff;
+    color: #2c3338;
+    font-size: 14px;
+    line-height: 2;
+    min-height: 30px;
+}
+.quick-debug-log-viewer-search-container span {
+	position: absolute;
+	top: 61%;
+	left: 10px;
+	transform: translateY(-50%);
+	color: #6E59A5;
+}
+#quick-debug-log-viewer-modal-content {
+     max-width:800px;
+     margin:60px auto;
+     background:#fff;
+     padding:20px;
+     border-radius:8px;
+     overflow-y:auto;
+     height:80%;
+     position:relative;
+     box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+#quick-debug-log-viewer-modal-close {
+    position:absolute;
+    top:10px;
+    right:10px;
+    font-size:24px;
+    border:none;
+    background:none;
+    cursor:pointer;
+}
+
+.quick-debug-log-viewer-load-more-container {
+    margin-top: 1rem; 
+    text-align: center;
+}

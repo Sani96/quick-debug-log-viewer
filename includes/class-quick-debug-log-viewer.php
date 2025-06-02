@@ -76,7 +76,7 @@ class Quick_Debug_Log_Viewer {
 		$this->load_dependencies();
 		$this->define_admin_hooks();
 		// This is the public side of the plugin, so we don't need to define public hooks here.
-		// $this->define_public_hooks();
+		$this->define_public_hooks();
 	}
 
 	/**
@@ -108,7 +108,7 @@ class Quick_Debug_Log_Viewer {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-quick-debug-log-viewer-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-quick-debug-log-viewer-public.php';
 		$this->loader = new Quick_Debug_Log_Viewer_Loader();
 	}
 
@@ -133,7 +133,7 @@ class Quick_Debug_Log_Viewer {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new Quick_Debug_Log_Viewer_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Quick_Debug_Log_Viewer_Public( $this->get_plugin_name(), $this->get_version(), $this->loader );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 	}

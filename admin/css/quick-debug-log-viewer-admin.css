@@ -1,13 +1,22 @@
-/* Admin CSS for Quick Debug Log Viewer */
-.error-fatal {
-    color: #ff4c4c;
-    font-weight: bold;
+.quick-debug-log-container {
+    position: relative;
+    height: 550px;
+    overflow-y: scroll;
+    background: #1e1e1e;
+    color: #f5f5f5;
+    padding: 0;
+    border: 1px solid #ccc;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    margin-top: 20px;
 }
-.error-warning {
-    color: #ffa500;
+
+.alert {
+    white-space: pre-wrap;
 }
-.error-notice {
-    color: #ffff66;
+.log-content {
+    padding: 10px;
 }
 .scroll-btn {
     position: sticky;
@@ -27,42 +36,45 @@
     cursor: pointer;
     opacity: 0.9;
     transition: all 0.2s ease-in-out;
-    z-index: 10;
+    z-index: 20;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
-.quick-debug-log-container .alert {
-    margin-bottom:.5rem;
+.quick-debug-log-viewer-filter button.active {
+	background-color: #0073aa;
+	color: white;
 }
-
 .scroll-btn:hover {
     opacity: 1;
     transform: translateX(-50%) scale(1.1);
     box-shadow: 0 0 0 2px #6E59A5;
 }
-
 #scroll-up-btn {
-    top: 0;
-    display: none;
+    top: 10px;
 }
-
 #scroll-down-btn {
-    bottom: 0;
-    display: none;
+    bottom: 10px;
 }
-
+.error-fatal {
+    color: #ff4c4c;
+    font-weight: bold;
+}
+.error-warning {
+    color: #ffa500;
+}
+.error-notice {
+    color: #ffff66;
+}
 .quick-debug-log-viewer-actions {
     margin-top: 1rem;
     display: flex;
     gap: 1rem;
 }
-
 .quick-debug-log-viewer-filter {
     margin-top: 1rem;
     display: flex;
     align-items: center;
     gap: .5rem;
 }
-
 .quick-debug-log-viewer-search-container {
     position: relative;
 }
@@ -72,7 +84,6 @@
     max-width: 400px;
     margin: 1em 0 0;
 }
-
 .quick-debug-log-viewer-search-container span {
     position: absolute;
     top: 61%;

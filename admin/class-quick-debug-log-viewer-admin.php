@@ -1,5 +1,5 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -33,10 +33,6 @@ class Quick_Debug_Log_Viewer_Admin {
 		$this->version = $version;
 		$this->loader = $loader;
 		$this->debug_log_file_path = $debug_log_file_path ? $debug_log_file_path : WP_CONTENT_DIR . '/debug.log';
-
-		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-quick-debug-log-viewer-errors-register.php';
-		$this->errors_register = new Quick_Debug_Log_Viewer_Errors_Register($this->plugin_name, $this->version);
-
 		$this->setup_admin_hooks();
 	}
 
@@ -49,11 +45,11 @@ class Quick_Debug_Log_Viewer_Admin {
      */
 	public function setup_admin_hooks() {
 		$this->loader->add_action('admin_menu', $this, 'add_admin_menu');
-		$this->loader->add_action('admin_init', $this, 'handle_clear_log_request');
 		$this->loader->add_action('admin_notices', $this, 'show_admin_notices');
-		$this->loader->add_action('admin_post_download_debug_log', $this, 'admin_post_download_debug_log');
-		$this->loader->add_action('wp_ajax_search_debug_log', $this, 'search_debug_log');
-		$this->loader->add_action('wp_ajax_load_more_debug_blocks', $this, 'load_more_debug_blocks');
+		$this->loader->add_action('wp_ajax_quick_debug_log_viewer_admin_download_log', $this, 'quick_debug_log_viewer_admin_download_debug_log');
+		$this->loader->add_action('wp_ajax_quick_debug_log_viewer_admin_clear_log', $this, 'quick_debug_log_viewer_admin_clear_log');
+		$this->loader->add_action('wp_ajax_quick_debug_log_viewer_admin_search_debug_log', $this, 'quick_debug_log_viewer_admin_search_debug_log');
+		$this->loader->add_action('wp_ajax_quick_debug_log_viewer_admin_load_more_debug_blocks', $this, 'quick_debug_log_viewer_admin_load_more_debug_blocks');
 	}
 
     /**
@@ -64,20 +60,22 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @return   void
 	 */
 
-	public function handle_clear_log_request() {
-		if (isset($_POST['clear_debug_log']) && check_admin_referer('clear_debug_log_action', 'clear_debug_log_nonce')) {
-			if (!current_user_can('manage_options')) {
-				return;
-			}
-			global $wp_filesystem;
-			if (empty($wp_filesystem)) {
-				require_once ABSPATH . '/wp-admin/includes/file.php';
-				WP_Filesystem();
-			}
+	public function quick_debug_log_viewer_admin_clear_log() {
 
-			$wp_filesystem->put_contents($this->debug_log_file_path, '', FS_CHMOD_FILE);
-			$this->clear_success = true;
+		if (!current_user_can('manage_options')) {
+			return;
 		}
+
+		check_ajax_referer('quick_debug_log_viewer_admin_clear_log_nonce', 'nonce');
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		$wp_filesystem->put_contents($this->debug_log_file_path, '', FS_CHMOD_FILE);
+		$this->clear_success = true;
+		wp_send_json_success([]);
 	}
 
 	/**
@@ -88,43 +86,17 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @return   void
 	 * 
 	 */
-	public function search_debug_log() {
-		check_ajax_referer('search_debug_log_nonce', 'nonce');
-
+	public function quick_debug_log_viewer_admin_search_debug_log() {
+		check_ajax_referer('quick_debug_log_viewer_admin_search_debug_log_nonce', 'nonce');
 		$search_term = isset($_POST['keyword']) ? sanitize_text_field(wp_unslash($_POST['keyword'])) : '';
-		$blocks = $this->errors_register->search_debug_log_blocks_streaming($this->debug_log_file_path, $search_term);
-
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-quick-debug-log-viewer-log-reader.php';
+		$blocks = Quick_Debug_Log_Viewer_Log_Reader::search_blocks($this->debug_log_file_path, $search_term);
 		if (!$blocks || !is_array($blocks)) {
 			wp_send_json_success([]);
 		}
-
-		if (!empty($search_term)) {
-			$search_term = strtolower($search_term);
-			$blocks = array_filter($blocks, function($block) use ($search_term) {
-				return strpos(strtolower($block), $search_term) !== false;
-			});
-		}
-
-		$formatted_blocks = array_map(function($block) {
-			$class = 'log-block'; // base
-			if (stripos($block, 'fatal error') !== false) {
-				$class .= ' error-fatal';
-			} elseif (stripos($block, 'warning') !== false) {
-				$class .= ' error-warning';
-			} elseif (stripos($block, 'notice') !== false) {
-				$class .= ' error-notice';
-			} elseif (stripos($block, 'deprecated') !== false) {
-				$class .= ' error-deprecated';
-			}
-
-			return [
-				'text' => esc_html($block),
-				'class' => esc_attr($class)
-			];
-		}, array_values($blocks));
-
-		wp_send_json_success($formatted_blocks);
-
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-quick-debug-log-viewer-formatter.php';
+		$formatted = Quick_Debug_Log_Viewer_Formatter::format_blocks($blocks);
+		wp_send_json_success($formatted);
 	}
 
 	/**
@@ -134,32 +106,19 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @access   public
 	 * @return   void
 	 */
-	public function load_more_debug_blocks() {
-		check_ajax_referer('load_more_debug_log_nonce', 'nonce');
-
+	public function quick_debug_log_viewer_admin_load_more_debug_blocks() {
+		check_ajax_referer('quick_debug_log_viewer_admin_load_more_debug_log_nonce', 'nonce');
 		$offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
 		$limit  = 30;
-
-		$blocks = $this->errors_register->parse_debug_log_blocks_streaming($this->debug_log_file_path, $offset + $limit);
-		$blocks = array_slice($blocks, $offset, $limit);
-
-		$formatted = array_map(function($block) {
-			$class = 'log-block';
-			if (stripos($block, 'fatal error') !== false) {
-				$class .= ' error-fatal';
-			} elseif (stripos($block, 'warning') !== false) {
-				$class .= ' error-warning';
-			} elseif (stripos($block, 'notice') !== false) {
-				$class .= ' error-notice';
-			} elseif (stripos($block, 'deprecated') !== false) {
-				$class .= ' error-deprecated';
-			}
-			return [
-				'text' => esc_html($block),
-				'class' => esc_attr($class)
-			];
-		}, $blocks);
-
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-quick-debug-log-viewer-log-reader.php';
+		if ( ! file_exists( $this->debug_log_file_path ) ) {
+			wp_send_json_error( 'debug.log not found' );
+		}
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-quick-debug-log-viewer-formatter.php';
+		$blocks = Quick_Debug_Log_Viewer_Log_Reader::parse_blocks( $this->debug_log_file_path, $offset + $limit );
+		$blocks = array_slice( $blocks, $offset, $limit );		
+		$formatted = Quick_Debug_Log_Viewer_Formatter::format_blocks( $blocks );
+		wp_send_json_success( $formatted );
 		wp_send_json_success($formatted);
 	}
 
@@ -204,8 +163,11 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @return   void
 	 */
 	public function display_admin_page() {
-		$blocks = $this->errors_register->parse_debug_log_blocks_streaming($this->debug_log_file_path, 300);
-		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/quick-debug-log-viewer-admin-display.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-quick-debug-log-viewer-log-reader.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-quick-debug-log-viewer-formatter.php';
+		$raw_blocks = Quick_Debug_Log_Viewer_Log_Reader::parse_blocks($this->debug_log_file_path, 300);
+		$blocks     = Quick_Debug_Log_Viewer_Formatter::format_blocks($raw_blocks);
+		require_once plugin_dir_path(__FILE__) . 'partials/quick-debug-log-viewer-admin-display.php';
 	}
 
 	/**
@@ -228,6 +190,9 @@ class Quick_Debug_Log_Viewer_Admin {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/quick-debug-log-viewer-admin.js', array('jquery'), $this->version, false);
+		wp_localize_script($this->plugin_name, 'quick_debug_log_viewer_admin_ajax', [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+		]);
 	}
 
 	/**
@@ -237,10 +202,11 @@ class Quick_Debug_Log_Viewer_Admin {
 	 * @access   public
 	 * @return   void
 	 */
-	public function admin_post_download_debug_log() {
+	public function quick_debug_log_viewer_admin_download_debug_log() {
 		if (!current_user_can('manage_options')) {
 			wp_die(esc_html__('You are not allowed to download the debug log.', 'quick-debug-log-viewer'));
 		}
+		check_ajax_referer('quick_debug_log_viewer_admin_download_debug_log_nonce', 'nonce');
 		global $wp_filesystem;
 		if (empty($wp_filesystem)) {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
@@ -252,7 +218,7 @@ class Quick_Debug_Log_Viewer_Admin {
 			if ($log_content !== false) {
 				header('Content-Type: text/plain');
 				header('Content-Disposition: attachment; filename="debug.log"');
-				echo $log_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				wp_send_json_success($log_content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				exit;
 			} else {
 				wp_die(esc_html__('Could not read debug log file.', 'quick-debug-log-viewer'));

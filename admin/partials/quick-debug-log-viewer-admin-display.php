@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div class="wrap">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
     <div class="quick-debug-log-viewer-search-container">
-        <input type="text" id="quick-debug-log-viewer-log-search" placeholder="Search log…"  data-nonce="<?php echo esc_attr(wp_create_nonce('search_debug_log_nonce')); ?>">
+        <input type="text" id="quick-debug-log-viewer-log-search" placeholder="Search log…" data-nonce="<?php echo esc_attr(wp_create_nonce('quick_debug_log_viewer_admin_search_debug_log_nonce')); ?>">
         <span class="dashicons dashicons-search"></span>
     </div>
     <div class="quick-debug-log-viewer-admin-display-errors">
@@ -28,45 +28,45 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <button type="button" class="button" onclick="filterLogs('error-notice')">Notice</button>
         </div>
 
-        <div class="quick-debug-log-container" style="position:relative;max-height: 550px; overflow-y: scroll; background: #1e1e1e; color: #f5f5f5; padding: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px; line-height: 1.4; margin-top: 20px;">
+        <div class="quick-debug-log-container">
             <button id="scroll-up-btn" class="scroll-btn dashicons dashicons-arrow-up-alt2" title="Scroll to Top"></button>
-            <?php
+
+            <div id="quick-debug-log-content" class="log-content">
+                <?php
                 if ( isset( $blocks ) && is_array( $blocks ) && !empty( $blocks ) ) {
                     foreach ( $blocks as $block ) {
-                        $css_class = '';
-                        if ( stripos($block, 'Fatal') !== false ) {
-                            $css_class = 'error-fatal';
-                        } elseif ( stripos($block, 'Warning') !== false ) {
-                            $css_class = 'error-warning';
-                        } elseif ( stripos($block, 'Notice') !== false ) {
-                            $css_class = 'error-info';
-                        } else {
-                            $css_class = 'error-secondary';
-                        }
-
+                        $css_class = isset($block['class']) ? $block['class'] : 'error-secondary';
                         echo '<div class="alert ' . esc_attr($css_class) . '">';
-                        echo esc_html($block);
+                        echo esc_html($block['text']);
                         echo '</div>';
                     }
                 } else {
                     echo '<p>' . esc_html__('No errors found.', 'quick-debug-log-viewer') . '</p>';
                 }
-            ?>
+                ?>
+            </div>
+
             <button id="scroll-down-btn" class="scroll-btn dashicons dashicons-arrow-down-alt2" title="Scroll to Bottom"></button>
         </div>
 
+
         <div style="margin-top: 1rem; text-align: center;">
-            <button data-nonce="<?php echo esc_attr(wp_create_nonce('load_more_debug_log_nonce')); ?>" id="load-more-errors" class="button button-secondary">Load More</button>
+            <button data-nonce="<?php echo esc_attr(wp_create_nonce('quick_debug_log_viewer_admin_load_more_debug_log_nonce')); ?>" id="load-more-errors" class="button button-secondary">Load More</button>
         </div>
 
     </div>
 
     <div class="quick-debug-log-viewer-actions">
-        <form method="post" style="margin-bottom: 10px;">
-            <?php wp_nonce_field('clear_debug_log_action', 'clear_debug_log_nonce'); ?>
-            <input type="hidden" name="clear_debug_log" value="1">
-            <button type="submit" class="button button-secondary">Clear debug.log</button>
-        </form>
-        <a href="<?php echo esc_url(admin_url('admin-post.php?action=download_debug_log')); ?>" class="button button-primary" style="margin-bottom: 10px;">Download debug.log</a>
+        <button id="quick-debug-log-viewer-admin-clear-log"
+                class="button button-secondary"
+                data-nonce="<?php echo esc_attr( wp_create_nonce( 'quick_debug_log_viewer_admin_clear_log_nonce' ) ); ?>">
+            Clear debug.log
+        </button>
+
+        <button id="quick-debug-log-viewer-admin-download-log"
+                class="button button-primary"
+                data-nonce="<?php echo esc_attr( wp_create_nonce( 'quick_debug_log_viewer_admin_download_debug_log_nonce' ) ); ?>">
+            Download debug.log
+        </button>
     </div>
 </div>
