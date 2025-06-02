@@ -3,7 +3,7 @@ Contributors: sani060913
 Tags: debug, error log, admin, troubleshooting, logging  
 Requires at least: 6.0  
 Tested up to: 6.8  
-Stable tag: 1.0.4  
+Stable tag: 1.2.0  
 Requires PHP: 7.0  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
@@ -50,6 +50,15 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 
 == Changelog ==
 
+= 1.2.0 =
+* Introduced a **floating action button (FAB)** and modal on the frontend, allowing you to view, search, and filter the debug.log even while browsing your site.
+* Refactored the internal logic into a dedicated `Log_Reader` class to centralize the parsing and block detection across frontend and backend.
+* Added a `Formatter` class to dynamically assign CSS classes based on error types (fatal, warning, notice, etc).
+* Replaced the legacy log-clear form with an **AJAX-powered log clearing**, improving user experience and UI consistency.
+* Disabled “Load More” while performing an active search, to prevent inconsistent results.
+* Removed deprecated `Errors_Register` class.
+* Polished the admin and frontend UI for improved readability and consistency.
+
 = 1.0.4 =
 * Improved regex for better parsing of multi-line log entries and stack traces  
 * Added escaping of log output with `esc_html()` for enhanced security  
@@ -80,6 +89,5 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 * Download the log for backups or support.
 
 == Upgrade Notice ==
-
-= 1.0.4 =
-Improved performance and security: better parsing of stack traces, safe HTML output, and progressive loading for large debug.log files.
+= 1.2.0 =
+New frontend viewer, AJAX-based log clearing, and major UI/code improvements.
