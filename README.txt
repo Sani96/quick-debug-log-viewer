@@ -3,7 +3,7 @@ Contributors: sani060913
 Tags: debug, error log, admin, troubleshooting, logging  
 Requires at least: 6.0  
 Tested up to: 6.8  
-Stable tag: 1.2.0  
+Stable tag: 1.2.1
 Requires PHP: 7.0  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
@@ -12,11 +12,12 @@ Easily view and manage your WordPress debug.log file directly from the admin are
 
 == Description ==
 
-**Quick debug.log Viewer** lets you quickly inspect your site's debug.log file without leaving the WordPress dashboard.
+**Quick debug.log Viewer** lets you quickly inspect your site's debug.log file without leaving the WordPress dashboard. Now with a **floating action button (FAB)** and modal for frontend viewing, searching, and filtering!
 
 - Instantly view, scroll, **search**, and filter your `debug.log` contents  
+- 🔍 Search and browse logs even from the frontend with a floating action button (FAB) and modal  
 - Filter logs by type: Fatal, Warning, Notice — or show all  
-- Clear the log with a single click  
+- Clear the log with a single click (now via AJAX)  
 - Download the log for backups or support  
 - Load large logs in chunks with the **Load More** button  
 - Secure HTML output with escaping to prevent session theft  
@@ -47,8 +48,11 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 == Screenshots ==
 
 1. View and filter your debug.log directly in the admin panel.
+2. FAB and modal for frontend viewing, searching, and filtering.
 
 == Changelog ==
+= 1.2.1 =
+* Updated plugin description to reflect new frontend features and recent improvements.
 
 = 1.2.0 =
 * Introduced a **floating action button (FAB)** and modal on the frontend, allowing you to view, search, and filter the debug.log even while browsing your site.
@@ -89,5 +93,5 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 * Download the log for backups or support.
 
 == Upgrade Notice ==
-= 1.2.0 =
-New frontend viewer, AJAX-based log clearing, and major UI/code improvements.
+= 1.2.1 =
+Updated plugin description with latest features.
