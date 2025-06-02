@@ -130,7 +130,7 @@ class Quick_Debug_Log_Viewer_Public {
 	 * This function checks the nonce for security, verifies user permissions,
 	 * and reads the log file.
 	 * 
-	 * @since    1.0.5
+	 * @since    1.0.4
 	 * @access   public
 	 * @return   void
 	 */

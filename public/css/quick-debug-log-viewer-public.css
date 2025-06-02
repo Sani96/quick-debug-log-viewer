@@ -238,3 +238,55 @@
     margin-top: 1rem; 
     text-align: center;
 }
+
+
+.wpsani-click-tracker-footer-bar {
+    margin: 20px auto 40px auto;
+    padding: 15px 20px;
+    background: #f1f1f1;
+    border-left: 4px solid #6E59A5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.wpsani-footer-bar {
+    margin: 30px auto 40px auto;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #f9f9f9, #f1f1f1);
+    border-left: 4px solid #6E59A5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    animation: fade-in-footer 0.4s ease-in;
+    transition: background 0.3s ease;
+}
+
+.wpsani-footer-bar .footer-cta {
+    background-color: #6E59A5;
+    color: #fff !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.wpsani-footer-bar a {
+    color: #6E59A5;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.footer-cta:hover {
+    background-color: #5a4b8c;
+    transform: scale(1.03);
+}

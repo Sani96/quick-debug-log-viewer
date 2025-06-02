@@ -69,4 +69,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             Download debug.log
         </button>
     </div>
+
+    <div class="wpsani-footer-bar">
+        <span>
+            <?php esc_html_e( 'Discover more on', 'quick-debug-log-viewer' ); ?>
+            <a href="<?php echo esc_url( 'https://wpsani.store/?utm_source=debug_log_viewer&utm_medium=wpsani_footer&utm_campaign=plugin_referral' ); ?>" target="_blank">
+                wpsani.store
+            </a>
+        </span>
+        <a href="<?php echo esc_url( 'https://wpsani.store/?utm_source=debug_log_viewer&utm_medium=wpsani_footer&utm_campaign=plugin_referral' ); ?>" class="footer-cta" target="_blank">
+            ❤️ <?php esc_html_e( 'Explore more plugins made with love →', 'quick-debug-log-viewer' ); ?>
+        </a>
+    </div>
 </div>
