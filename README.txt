@@ -3,7 +3,7 @@ Contributors: sani060913
 Tags: debug, error log, admin, troubleshooting, logging  
 Requires at least: 6.0  
 Tested up to: 6.8  
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.0  
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
@@ -13,6 +13,7 @@ Easily view and manage your WordPress debug.log file directly from the admin are
 == Description ==
 
 **Quick debug.log Viewer** lets you quickly inspect your site's debug.log file without leaving the WordPress dashboard. Now with a **floating action button (FAB)** and modal for frontend viewing, searching, and filtering!
+The FAB is now draggable and its position is remembered — with a right-click option to reset.
 
 - Instantly view, scroll, **search**, and filter your `debug.log` contents  
 - 🔍 Search and browse logs even from the frontend with a floating action button (FAB) and modal  
@@ -51,6 +52,14 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 2. FAB and modal for frontend viewing, searching, and filtering.
 
 == Changelog ==
+
+= 1.2.2 =
+* The frontend **floating action button (FAB)** is now **draggable** — place it wherever you want on screen.
+* The FAB's position is **saved and restored** between visits.
+* Added a **right-click menu** on the FAB to **reset its position** to default.
+* UI polish: added an indicator (`⋮`) to show users that the FAB has options.
+* Prevented the modal from opening if the FAB is dragged instead of clicked.
+
 = 1.2.1 =
 * Updated plugin description to reflect new frontend features and recent improvements.
 
@@ -93,5 +102,5 @@ Yes — just click the “Clear Log” button to safely empty the log file.
 * Download the log for backups or support.
 
 == Upgrade Notice ==
-= 1.2.1 =
-Updated plugin description with latest features.
+= 1.2.2 =
+You can now drag the frontend FAB and reset its position with a right-click — more control, same simplicity.
