@@ -161,6 +161,8 @@
 			}
 		});
 
+
+		// Clear debug.log
 		$('#quick-debug-log-viewer-clear-log').on('click', function(e) {
 			e.preventDefault();
 			if (!confirm('Are you sure you want to clear the debug.log file?')) return;
@@ -175,6 +177,7 @@
 			});
 		});
 
+		// Download debug.log
 		$('#quick-debug-log-viewer-download-log').on('click', function(e) {
 			e.preventDefault();
 			$.post(quick_debug_log_viewer_public_ajax.ajax_url, {
@@ -193,7 +196,6 @@
 				button.prop('disabled', false).text('Clear debug.log');
 			});
 		});
-
 
 		// Move FAB around
 		let isDragging = false;
@@ -238,6 +240,35 @@
 				top: `${rect.top}px`
 			}));
 		});
+
+		// Show contextual menu on right click
+		fab.addEventListener('contextmenu', function(e) {
+			e.preventDefault();
+			const menu = document.getElementById('quick-debug-fab-menu');
+			menu.style.display = 'block';
+		});
+
+		// Close menu clicking away
+		document.addEventListener('click', function(e) {
+			const menu = document.getElementById('quick-debug-fab-menu');
+			if (!fab.contains(e.target)) {
+				menu.style.display = 'none';
+			}
+		});
+
+		// Reset position
+		document.getElementById('reset-fab-position').addEventListener('click', function(e) {
+			e.stopPropagation(); // Avoid opening modal
+			e.preventDefault();
+			localStorage.removeItem('quick-debug-log-viewer-fab-position');
+			fab.style.left = '';
+			fab.style.top = '';
+			fab.style.right = '20px';
+			fab.style.bottom = '20px';
+			document.getElementById('quick-debug-fab-menu').style.display = 'none';
+		});
+
+		
 	});
 
 })( jQuery );

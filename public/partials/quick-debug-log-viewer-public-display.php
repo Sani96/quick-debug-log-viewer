@@ -16,6 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div id="quick-debug-log-viewer-fab" title="View debug.log">     
     <span class="dashicons dashicons-editor-code"></span>
     <span class="screen-reader-text">Open debug log viewer</span>
+    <span class="fab-options-indicator">⋮</span>
+    <div id="quick-debug-fab-menu" class="fab-menu" style="display: none;">
+        <button id="reset-fab-position" class="fab-menu-item">↺ Reset position</button>
+    </div>
 </div>
 <div id="quick-debug-log-viewer-modal">
     <div id="quick-debug-log-viewer-modal-content">
