@@ -135,6 +135,7 @@
 
 		// Open modal on FAB click
 		$('#quick-debug-log-viewer-fab').on('click', function () {
+			if (wasDragged) return; // Avoid opening modal when dragging
 			$('#quick-debug-log-viewer-modal').fadeIn();
 			offset = 0;
 			$('#quick-debug-log-content').empty();
@@ -191,6 +192,51 @@
 				}
 				button.prop('disabled', false).text('Clear debug.log');
 			});
+		});
+
+
+		// Move FAB around
+		let isDragging = false;
+		let wasDragged = false;
+		let dragOffset = { x: 0, y: 0 };
+		const fab = document.getElementById('quick-debug-log-viewer-fab');
+
+		// Restore saved position
+		const savedPosition = localStorage.getItem('quick-debug-log-viewer-fab-position');
+		if (savedPosition) {
+			const pos = JSON.parse(savedPosition);
+			fab.style.left = pos.left;
+			fab.style.top = pos.top;
+			fab.style.right = 'auto';
+			fab.style.bottom = 'auto';
+		}
+
+		// Move FAB around handlers
+		fab.addEventListener('mousedown', function(e) {
+			e.preventDefault();
+			isDragging = true;
+			wasDragged = false;
+			dragOffset.x = e.clientX - fab.getBoundingClientRect().left;
+			dragOffset.y = e.clientY - fab.getBoundingClientRect().top;
+			fab.style.transition = 'none';
+		});
+		document.addEventListener('mousemove', function(e) {
+			if (!isDragging) return;
+			wasDragged = true;
+			fab.style.left = `${e.clientX - dragOffset.x}px`;
+			fab.style.top = `${e.clientY - dragOffset.y}px`;
+			fab.style.right = 'auto';
+			fab.style.bottom = 'auto';
+		});
+		document.addEventListener('mouseup', function() {
+			if (!isDragging) return;
+			isDragging = false;
+			fab.style.transition = '';
+			const rect = fab.getBoundingClientRect();
+			localStorage.setItem('quick-debug-log-viewer-fab-position', JSON.stringify({
+				left: `${rect.left}px`,
+				top: `${rect.top}px`
+			}));
 		});
 	});
 

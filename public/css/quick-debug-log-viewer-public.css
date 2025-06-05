@@ -290,3 +290,8 @@
     background-color: #5a4b8c;
     transform: scale(1.03);
 }
+
+#quick-debug-log-viewer-fab {
+  cursor: grab;
+  user-select: none;
+}
